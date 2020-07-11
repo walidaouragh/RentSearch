@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { PlacesService } from '../../places.service';
 import { IPlace } from '../../place.model';
-import { ModalController } from '@ionic/angular';
+import { ActionSheetController, ModalController } from '@ionic/angular';
 import { CreateBookingComponent } from '../../../bookings/create-booking/create-booking.component';
 
 @Component({
@@ -14,13 +14,14 @@ export class PlaceDetailPage implements OnInit {
     constructor(
         private activatedRoute: ActivatedRoute,
         private placesService: PlacesService,
-        public modalController: ModalController
+        public modalController: ModalController,
+        private actionSheetController: ActionSheetController
     ) {}
 
     place: IPlace;
 
     ngOnInit() {
-        let placeId: string = this.activatedRoute.snapshot.paramMap.get('placeId');
+        const placeId: string = this.activatedRoute.snapshot.paramMap.get('placeId');
         this.getPlaceDetail(placeId);
     }
 
@@ -33,6 +34,34 @@ export class PlaceDetailPage implements OnInit {
     }
 
     createOfferModal() {
+        this.actionSheetController
+            .create({
+                header: 'Choose an action',
+                buttons: [
+                    {
+                        text: 'Select Date',
+                        handler: () => {
+                            this.openBookingModel('select');
+                        },
+                    },
+                    {
+                        text: 'Random Date',
+                        handler: () => {
+                            this.openBookingModel('random');
+                        },
+                    },
+                    {
+                        text: 'Cancel',
+                        role: 'cancel',
+                    },
+                ],
+            })
+            .then((sheetElem) => {
+                sheetElem.present();
+            });
+    }
+
+    openBookingModel(mode: 'select' | 'random') {
         this.modalController
             .create({
                 component: CreateBookingComponent,

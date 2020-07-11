@@ -19,4 +19,8 @@ export class DiscoverPage implements OnInit {
     getPlaces() {
         this.places = this.placesService.getPlaces();
     }
+
+    segmentChanged(e: any) {
+        console.log(e.detail.value);
+    }
 }
