@@ -7,9 +7,13 @@ import { IonicModule } from '@ionic/angular';
 import { PlacesPageRoutingModule } from './places-routing.module';
 
 import { PlacesPage } from './places.page';
+import { OfferItemComponent } from './offers/offer-item/offer-item.component';
 
 @NgModule({
-    imports: [CommonModule, FormsModule, IonicModule, PlacesPageRoutingModule],
-    declarations: [PlacesPage],
+  imports: [CommonModule, FormsModule, IonicModule, PlacesPageRoutingModule],
+  declarations: [PlacesPage, OfferItemComponent],
+  exports: [
+    OfferItemComponent
+  ]
 })
 export class PlacesPageModule {}
