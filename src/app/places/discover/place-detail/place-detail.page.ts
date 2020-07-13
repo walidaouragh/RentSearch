@@ -65,14 +65,13 @@ export class PlaceDetailPage implements OnInit {
         this.modalController
             .create({
                 component: CreateBookingComponent,
-                componentProps: { selectedPlace: this.place },
+                componentProps: { selectedPlace: this.place, selectedMode: mode },
             })
             .then((modalEl) => {
                 modalEl.present();
                 return modalEl.onDidDismiss();
             })
             .then((res) => {
-                console.log(res.data, res.role);
                 if (res.role === 'confirm') {
                     console.log('BOOKED!');
                 }

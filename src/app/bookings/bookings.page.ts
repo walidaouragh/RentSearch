@@ -20,13 +20,11 @@ export class BookingsPage implements OnInit {
 
     getBookings() {
         this.bookings = this.bookingService.getBookings();
-        console.log(this.bookings);
     }
 
     onDeleteBooking(bookingId: string, slidingItem: IonItemSliding) {
         slidingItem.close();
         this.bookingService.deleteBooking(bookingId);
         this.router.navigateByUrl('/bookings');
-        console.log(this.bookings);
     }
 }

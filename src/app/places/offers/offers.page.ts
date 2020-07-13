@@ -24,8 +24,8 @@ export class OffersPage implements OnInit {
         this.offers = this.placesService.getPlaces();
     }
 
-    onEdit(placeId: string) {
+    onEdit(place: IPlace) {
         this.slidingItem.close();
-        this.router.navigateByUrl(`/places/offers/${placeId}`);
+        this.router.navigateByUrl(`/places/offers/${place.placeId}`);
     }
 }

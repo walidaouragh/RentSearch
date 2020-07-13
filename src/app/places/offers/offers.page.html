@@ -20,7 +20,7 @@
                     <ion-item-sliding #slidingItem *ngFor="let place of offers">
                         <app-offer-item [place]="place"></app-offer-item>
                         <ion-item-options>
-                            <ion-item-option color="secondary" (click)="onEdit(place.placeId)">
+                            <ion-item-option color="secondary" (click)="onEdit(place)">
                                 <ion-icon name="pencil-outline" slot="icon-only"></ion-icon>
                             </ion-item-option>
                         </ion-item-options>

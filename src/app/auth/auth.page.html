@@ -1,11 +1,111 @@
 <ion-header>
     <ion-toolbar>
-        <ion-title>Authenticate</ion-title>
+        <ion-title>{{ isLogin ? 'Login' : 'Signup' }}</ion-title>
     </ion-toolbar>
 </ion-header>
 
-<ion-content>
-    <ion-button color="primary" (click)="onLogin()">
-        Login
-    </ion-button>
+<ion-content class="ion-padding">
+    <form *ngIf="isLogin" [formGroup]="loginForm" (ngSubmit)="onLogin()" novalidate>
+        <ion-grid>
+            <ion-row>
+                <ion-col size-sm="6" offset-sm="3">
+                    <ion-list>
+                        <ion-item>
+                            <ion-label position="floating">Email</ion-label>
+                            <ion-input formControlName="email" type="email" required></ion-input>
+                        </ion-item>
+
+                        <span class="error ion-padding" *ngIf="loginFormControl.email.errors?.required && loginFormControl.email.touched">
+                            Email is required.
+                        </span>
+                        <span class="error ion-padding" *ngIf="loginFormControl.email.errors?.email && loginFormControl.email.touched">
+                            Please provide valid email.
+                        </span>
+
+                        <ion-item>
+                            <ion-label position="floating">Password</ion-label>
+                            <ion-input formControlName="password" type="password" required></ion-input>
+                        </ion-item>
+                        <span
+                            class="error ion-padding"
+                            *ngIf="loginFormControl.password.errors?.required && loginFormControl.password.touched"
+                        >
+                            Password is required.
+                        </span>
+                    </ion-list>
+                </ion-col>
+            </ion-row>
+            <ion-row>
+                <ion-col size-sm="4" offset-sm="4">
+                    <ion-button type="submit" color="primary" expand="block" [disabled]="!loginForm.valid">Login</ion-button>
+                </ion-col>
+            </ion-row>
+        </ion-grid>
+    </form>
+    <form *ngIf="!isLogin" [formGroup]="registerForm" (ngSubmit)="onRegister()" novalidate>
+        <ion-grid>
+            <ion-row>
+                <ion-col size-sm="6" offset-sm="3">
+                    <ion-list>
+                        <ion-item>
+                            <ion-label position="floating">Name</ion-label>
+                            <ion-input formControlName="name" type="text" required></ion-input>
+                        </ion-item>
+                        <span
+                            class="error ion-padding"
+                            *ngIf="registerFormControl.name.errors?.required && registerFormControl.name.touched"
+                        >
+                            Name is required.
+                        </span>
+                        <span
+                            class="error ion-padding"
+                            *ngIf="registerFormControl.name.errors?.minlength && registerFormControl.name.touched"
+                        >
+                            Name should be min 2 chars long.
+                        </span>
+
+                        <ion-item>
+                            <ion-label position="floating">Email</ion-label>
+                            <ion-input formControlName="email" type="email" required></ion-input>
+                        </ion-item>
+
+                        <span
+                            class="error ion-padding"
+                            *ngIf="registerFormControl.email.errors?.required && registerFormControl.email.touched"
+                        >
+                            Email is required.
+                        </span>
+                        <span class="error ion-padding" *ngIf="registerFormControl.email.errors?.email && registerFormControl.email.touched">
+                            Please provide valid email.
+                        </span>
+
+                        <ion-item>
+                            <ion-label position="floating">Password</ion-label>
+                            <ion-input formControlName="password" type="password" required></ion-input>
+                        </ion-item>
+                        <span
+                            class="error ion-padding"
+                            *ngIf="registerFormControl.password.errors?.required && registerFormControl.password.touched"
+                        >
+                            Password is required.
+                        </span>
+                    </ion-list>
+                </ion-col>
+            </ion-row>
+            <ion-row>
+                <ion-col size-sm="4" offset-sm="4">
+                    <ion-button type="submit" color="primary" expand="block" [disabled]="!registerForm.valid">Register</ion-button>
+                </ion-col>
+            </ion-row>
+        </ion-grid>
+    </form>
+    <ion-grid>
+        <ion-row>
+            <ion-col size-sm="4" offset-sm="4">
+                <ion-button type="button" color="primary" expand="block" fill="clear" (click)="onSwitchAuthMode()"
+                    >Switch to {{ isLogin ? 'Signup' : 'Login' }}</ion-button
+                >
+            </ion-col>
+        </ion-row>
+    </ion-grid>
 </ion-content>

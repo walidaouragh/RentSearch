@@ -21,6 +21,5 @@ export class DiscoverPage implements OnInit {
     }
 
     segmentChanged(e: any) {
-        console.log(e.detail.value);
     }
 }
