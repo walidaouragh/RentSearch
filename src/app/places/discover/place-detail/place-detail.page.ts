@@ -1,24 +1,31 @@
-import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { PlacesService } from '../../places.service';
 import { IPlace } from '../../place.model';
-import { ActionSheetController, ModalController } from '@ionic/angular';
+import { ActionSheetController, LoadingController, ModalController } from '@ionic/angular';
 import { CreateBookingComponent } from '../../../bookings/create-booking/create-booking.component';
+import { Subscription } from 'rxjs';
+import { BookingService } from '../../../bookings/booking.service';
 
 @Component({
     selector: 'app-place-detail',
     templateUrl: './place-detail.page.html',
     styleUrls: ['./place-detail.page.scss'],
 })
-export class PlaceDetailPage implements OnInit {
+export class PlaceDetailPage implements OnInit, OnDestroy {
     constructor(
         private activatedRoute: ActivatedRoute,
         private placesService: PlacesService,
         public modalController: ModalController,
-        private actionSheetController: ActionSheetController
+        private actionSheetController: ActionSheetController,
+        private bookingService: BookingService,
+        private router: Router,
+        private loadingCtr: LoadingController
     ) {}
 
     place: IPlace;
+    isLoading = false;
+    private placesSub: Subscription;
 
     ngOnInit() {
         const placeId: string = this.activatedRoute.snapshot.paramMap.get('placeId');
@@ -26,7 +33,11 @@ export class PlaceDetailPage implements OnInit {
     }
 
     getPlaceDetail(placeId: string) {
-        this.place = this.placesService.getPlace(placeId);
+        this.isLoading = true;
+        this.placesSub = this.placesService.getPlace(placeId).subscribe((place: IPlace) => {
+            this.place = place;
+            this.isLoading = false;
+        });
     }
 
     onBookPlace() {
@@ -73,8 +84,37 @@ export class PlaceDetailPage implements OnInit {
             })
             .then((res) => {
                 if (res.role === 'confirm') {
-                    console.log('BOOKED!');
+                    this.loadingCtr
+                        .create({
+                            keyboardClose: true,
+                            message: 'Booking wait...',
+                        })
+                        .then((loadingElem) => {
+                            loadingElem.present();
+                            this.bookingService
+                                .addBooking(
+                                    this.place.placeId,
+                                    this.place.userId,
+                                    this.place.title,
+                                    this.place.imageUrl,
+                                    res.data.bookingData.firstName,
+                                    res.data.bookingData.lastName,
+                                    res.data.bookingData.guestNumber,
+                                    res.data.bookingData.dateFrom,
+                                    res.data.bookingData.dateTo
+                                )
+                                .subscribe(() => {
+                                    loadingElem.dismiss();
+                                    this.router.navigateByUrl('/bookings');
+                                });
+                        });
                 }
             });
+    }
+
+    ngOnDestroy(): void {
+        if (this.placesSub) {
+            this.placesSub.unsubscribe();
+        }
     }
 }

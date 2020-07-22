@@ -15,10 +15,16 @@
                             <ion-input formControlName="email" type="email" required></ion-input>
                         </ion-item>
 
-                        <span class="error ion-padding" *ngIf="loginFormControl.email.errors?.required && loginFormControl.email.touched">
+                        <span
+                            class="error ion-padding"
+                            *ngIf="loginFormControl.email.errors?.required && loginFormControl.email.touched"
+                        >
                             Email is required.
                         </span>
-                        <span class="error ion-padding" *ngIf="loginFormControl.email.errors?.email && loginFormControl.email.touched">
+                        <span
+                            class="error ion-padding"
+                            *ngIf="loginFormControl.email.errors?.email && loginFormControl.email.touched"
+                        >
                             Please provide valid email.
                         </span>
 
@@ -37,7 +43,9 @@
             </ion-row>
             <ion-row>
                 <ion-col size-sm="4" offset-sm="4">
-                    <ion-button type="submit" color="primary" expand="block" [disabled]="!loginForm.valid">Login</ion-button>
+                    <ion-button type="submit" color="primary" expand="block" [disabled]="!loginForm.valid"
+                        >Login</ion-button
+                    >
                 </ion-col>
             </ion-row>
         </ion-grid>
@@ -75,7 +83,10 @@
                         >
                             Email is required.
                         </span>
-                        <span class="error ion-padding" *ngIf="registerFormControl.email.errors?.email && registerFormControl.email.touched">
+                        <span
+                            class="error ion-padding"
+                            *ngIf="registerFormControl.email.errors?.email && registerFormControl.email.touched"
+                        >
                             Please provide valid email.
                         </span>
 
@@ -94,7 +105,9 @@
             </ion-row>
             <ion-row>
                 <ion-col size-sm="4" offset-sm="4">
-                    <ion-button type="submit" color="primary" expand="block" [disabled]="!registerForm.valid">Register</ion-button>
+                    <ion-button type="submit" color="primary" expand="block" [disabled]="!registerForm.valid"
+                        >Register</ion-button
+                    >
                 </ion-col>
             </ion-row>
         </ion-grid>

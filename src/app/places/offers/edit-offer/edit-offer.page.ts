@@ -1,25 +1,31 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { PlacesService } from '../../places.service';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { IPlace } from '../../place.model';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Subscription } from 'rxjs';
+import { LoadingController } from '@ionic/angular';
 
 @Component({
     selector: 'app-edit-offer',
     templateUrl: './edit-offer.page.html',
     styleUrls: ['./edit-offer.page.scss'],
 })
-export class EditOfferPage implements OnInit {
+export class EditOfferPage implements OnInit, OnDestroy {
     constructor(
         private placesService: PlacesService,
         private activatedRoute: ActivatedRoute,
-        private fb: FormBuilder
+        private fb: FormBuilder,
+        private router: Router,
+        public loadingController: LoadingController
     ) {}
 
     offer: IPlace;
     form: FormGroup;
     dateFrom: string;
     dateTo: string;
+    isLoading = false;
+    private placesSub: Subscription;
 
     ngOnInit() {
         const placeId: string = this.activatedRoute.snapshot.paramMap.get('placeId');
@@ -27,14 +33,14 @@ export class EditOfferPage implements OnInit {
     }
 
     getOffer(placeId: string) {
-        this.offer = this.placesService.getPlace(placeId);
+        this.isLoading = true;
+        this.placesSub = this.placesService.getPlace(placeId).subscribe((place: IPlace) => {
+            this.offer = place;
+            this.isLoading = false;
+        });
         this.dateFrom = new Date().toISOString();
         this.dateTo = new Date().toISOString();
         this.createForm();
-    }
-
-    getDate() {
-        return new Date();
     }
 
     createForm() {
@@ -54,6 +60,26 @@ export class EditOfferPage implements OnInit {
     onEditOffer() {
         if (!this.form.valid) {
             return;
+        }
+
+        this.loadingController
+            .create({
+                keyboardClose: true,
+                message: 'Updating place...',
+            })
+            .then((loadingElem) => {
+                loadingElem.present();
+                this.placesService.updatePlace(this.offer.placeId, this.form.value).subscribe(() => {
+                    loadingElem.dismiss();
+                    this.form.reset();
+                    this.router.navigateByUrl('/places/offers');
+                });
+            });
+    }
+
+    ngOnDestroy(): void {
+        if (this.placesSub) {
+            this.placesSub.unsubscribe();
         }
     }
 }

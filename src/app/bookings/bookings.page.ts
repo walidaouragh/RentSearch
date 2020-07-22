@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { BookingService } from './booking.service';
 import { IBooking } from './booking.model';
-import { IonItemSliding } from '@ionic/angular';
+import { IonItemSliding, LoadingController } from '@ionic/angular';
 import { Router } from '@angular/router';
 
 @Component({
@@ -10,7 +10,11 @@ import { Router } from '@angular/router';
     styleUrls: ['./bookings.page.scss'],
 })
 export class BookingsPage implements OnInit {
-    constructor(private bookingService: BookingService, private router: Router) {}
+    constructor(
+        private bookingService: BookingService,
+        private router: Router,
+        private loadingCtr: LoadingController
+    ) {}
 
     bookings: IBooking[];
 
@@ -19,12 +23,25 @@ export class BookingsPage implements OnInit {
     }
 
     getBookings() {
-        this.bookings = this.bookingService.getBookings();
+        this.bookingService.getBookings().subscribe((bookings: IBooking[]) => {
+            this.bookings = bookings;
+        });
     }
 
     onDeleteBooking(bookingId: string, slidingItem: IonItemSliding) {
         slidingItem.close();
-        this.bookingService.deleteBooking(bookingId);
-        this.router.navigateByUrl('/bookings');
+        this.loadingCtr
+            .create({
+                keyboardClose: true,
+                message: 'Deleting wait...',
+            })
+            .then((loadingElem) => {
+                loadingElem.present();
+                this.bookingService.deleteBooking(bookingId).subscribe(() => {
+                    loadingElem.dismiss();
+                    this.getBookings();
+                    this.router.navigateByUrl('/bookings');
+                });
+            });
     }
 }

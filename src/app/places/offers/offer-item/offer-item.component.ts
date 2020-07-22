@@ -1,20 +1,15 @@
-import {Component, Input, OnInit} from '@angular/core';
-import {IPlace} from '../../place.model';
+import { Component, Input, OnInit } from '@angular/core';
+import { IPlace } from '../../place.model';
 
 @Component({
-  selector: 'app-offer-item',
-  templateUrl: './offer-item.component.html',
-  styleUrls: ['./offer-item.component.scss'],
+    selector: 'app-offer-item',
+    templateUrl: './offer-item.component.html',
+    styleUrls: ['./offer-item.component.scss'],
 })
 export class OfferItemComponent implements OnInit {
+    constructor() {}
 
-  constructor() { }
+    @Input() place: IPlace;
 
-  @Input() place: IPlace;
-
-  ngOnInit() {}
-
-  getDate() {
-    return new Date();
-  }
+    ngOnInit() {}
 }

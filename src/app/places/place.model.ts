@@ -6,4 +6,5 @@
     price: number;
     dateFrom: Date;
     dateTo: Date;
+    userId: string;
 }

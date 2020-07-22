@@ -10,10 +10,8 @@ import { PlacesPage } from './places.page';
 import { OfferItemComponent } from './offers/offer-item/offer-item.component';
 
 @NgModule({
-  imports: [CommonModule, FormsModule, IonicModule, PlacesPageRoutingModule],
-  declarations: [PlacesPage, OfferItemComponent],
-  exports: [
-    OfferItemComponent
-  ]
+    imports: [CommonModule, FormsModule, IonicModule, PlacesPageRoutingModule],
+    declarations: [PlacesPage, OfferItemComponent],
+    exports: [OfferItemComponent],
 })
 export class PlacesPageModule {}

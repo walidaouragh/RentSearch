@@ -97,6 +97,11 @@
                     </ion-list>
                 </ion-col>
             </ion-row>
+            <ion-row>
+                <ion-col size-sm="4" offset-sm="3">
+                    <span class="error" *ngIf="!dateValid()"> to date must be greater than from date</span>
+                </ion-col>
+            </ion-row>
         </ion-grid>
         <ion-button color="primary" expand="block" type="submit" [disabled]="!form.valid || !dateValid()"
             >Book!</ion-button

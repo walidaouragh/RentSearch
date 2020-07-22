@@ -1,15 +1,18 @@
 import { Injectable } from '@angular/core';
 import { IPlace } from './place.model';
+import { AuthService } from '../auth/auth.service';
+import { BehaviorSubject } from 'rxjs';
+import { delay, map, take, tap } from 'rxjs/operators';
 
 @Injectable({
     providedIn: 'root',
 })
 export class PlacesService {
-    constructor() {}
+    constructor(private authService: AuthService) {}
 
     date = new Date();
 
-    private places: IPlace[] = [
+    private places: BehaviorSubject<IPlace[]> = new BehaviorSubject<IPlace[]>([
         {
             placeId: '1',
             imageUrl:
@@ -20,6 +23,7 @@ export class PlacesService {
             price: 149.99,
             dateFrom: new Date(),
             dateTo: new Date(this.date.setMonth(this.date.getMonth() + 1)),
+            userId: '1',
         },
         {
             placeId: '2',
@@ -30,6 +34,7 @@ export class PlacesService {
             price: 199.99,
             dateFrom: new Date(),
             dateTo: new Date(this.date.setMonth(this.date.getMonth() + 1)),
+            userId: '2',
         },
         {
             placeId: '3',
@@ -40,18 +45,57 @@ export class PlacesService {
             price: 125.99,
             dateFrom: new Date(),
             dateTo: new Date(this.date.setMonth(this.date.getMonth() + 1)),
+            userId: '3',
         },
-    ];
+    ]);
 
     getPlaces() {
-        return [...this.places];
+        return this.places.asObservable();
     }
 
     getPlace(placeId: string) {
-        return {
-            ...this.places.find((p) => {
-                return p.placeId === placeId;
-            }),
-        };
+        return this.places.pipe(
+            take(1),
+            map((places) => {
+                return { ...places.find((p) => p.placeId === placeId) };
+            })
+        );
+    }
+
+    addPlace(place: IPlace) {
+        place.placeId = Math.random().toString();
+        place.imageUrl = './assets/house.jpg';
+        place.userId = this.authService.UserId;
+        place.dateFrom = new Date();
+        place.dateTo = new Date();
+
+        return this.places.pipe(
+            take(1),
+            delay(1000),
+            tap((places: IPlace[]) => {
+                this.places.next(places.concat(place));
+            })
+        );
+    }
+
+    updatePlace(placeId: string, place: IPlace) {
+        return this.places.pipe(
+            take(1),
+            delay(1000),
+            tap((places: IPlace[]) => {
+                const updatedPlaceIndex = places.findIndex((pl) => pl.placeId === placeId);
+
+                const updatedPlaces = [...places];
+
+                updatedPlaces[updatedPlaceIndex].placeId = placeId;
+                updatedPlaces[updatedPlaceIndex].title = place.title;
+                updatedPlaces[updatedPlaceIndex].description = place.description;
+                updatedPlaces[updatedPlaceIndex].price = place.price;
+                updatedPlaces[updatedPlaceIndex].dateFrom = place.dateFrom;
+                updatedPlaces[updatedPlaceIndex].dateTo = place.dateTo;
+
+                this.places.next(updatedPlaces);
+            })
+        );
     }
 }
